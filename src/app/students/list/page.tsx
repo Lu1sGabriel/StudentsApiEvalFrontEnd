@@ -47,6 +47,7 @@ import { formatCPF } from '@/utils/formatCpfUtils';
 import { formatDate } from '@/utils/formatDateUtils';
 import { CreateStudent, Student, studentApi } from '@/services/client/student';
 import EditStudentModal from '../modals/edit';
+import ConfirmDeactivateModal from '../modals/deactivate';
 
 type SortField = 'name' | 'email' | 'grade' | 'createdAt';
 type SortOrder = 'asc' | 'desc';
@@ -66,6 +67,9 @@ export default function Students() {
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+  const [confirmModalOpen, setConfirmModalOpen] = useState(false);
+  const [studentToDeactivate, setStudentToDeactivate] = useState<Student | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const fetchStudents = async () => {
     setLoading(true);
@@ -80,13 +84,19 @@ export default function Students() {
     }
   };
 
-  const deactivateStudent = async (id: string) => {
+  const confirmDeactivateStudent = async () => {
+    if (!studentToDeactivate) return;
+
+    setDeleting(true);
     try {
-      await studentApi.deactivate(id);
-    } catch {
-      setError('Ocorreu um erro ao carregar a lista de estudantes.');
-    } finally {
+      await studentApi.deactivate(studentToDeactivate.id);
+      setConfirmModalOpen(false);
       fetchStudents();
+    } catch (err) {
+      setError('Erro ao desativar estudante.');
+      console.error(err);
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -160,6 +170,11 @@ export default function Students() {
   const handleEditStudent = (student: Student) => {
     setSelectedStudent(student);
     setEditModalOpen(true);
+  };
+
+  const handleConfirmDeactivate = (student: Student) => {
+    setStudentToDeactivate(student);
+    setConfirmModalOpen(true);
   };
 
   const getGradeBadgeColor = (grade: number) => {
@@ -272,6 +287,14 @@ export default function Students() {
         onClose={() => setEditModalOpen(false)}
         student={selectedStudent}
         onSave={fetchStudents}
+      />
+
+      <ConfirmDeactivateModal
+        opened={confirmModalOpen}
+        onClose={() => setConfirmModalOpen(false)}
+        onConfirm={confirmDeactivateStudent}
+        studentName={studentToDeactivate?.name || ''}
+        loading={deleting}
       />
 
       {/* Header */}
@@ -563,7 +586,7 @@ export default function Students() {
                           <ActionIcon
                             variant="subtle"
                             color="red"
-                            onClick={() => deactivateStudent(student.id)}
+                            onClick={() => handleConfirmDeactivate(student)}
                             className="hover:bg-red-100"
                           >
                             <IconTrash size="1rem" />
