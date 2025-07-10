@@ -59,29 +59,37 @@ export default function EditStudentModal({ opened, onClose, student, onSave }: P
     setErrors({});
 
     try {
+      const gradeValue = typeof grade === 'number' ? grade : parseFloat(String(grade).replace(',', '.'));
+
+      if (gradeValue === undefined || isNaN(gradeValue)) {
+        setErrors({ grade: 'Nota inválida' });
+        setIsSubmitting(false);
+        return;
+      }
+
       const validated = studentSchema.parse({
         name: name.trim(),
         cpf,
         email: email.trim(),
-        grade: typeof grade === 'string' ? parseFloat(grade.replace(',', '.')) : grade,
+        grade: gradeValue,
       });
 
-      const promises: Promise<Student>[] = [];
-
       if (validated.name !== student.name) {
-        promises.push(studentApi.changeName(student.id, validated.name));
-      }
-      if (validated.cpf !== student.cpf) {
-        promises.push(studentApi.changeCpf(student.id, validated.cpf));
-      }
-      if (validated.grade !== student.grade) {
-        promises.push(studentApi.changeGrade(student.id, validated.grade.toString()));
-      }
-      if (validated.email !== student.email) {
-        promises.push(studentApi.changeEmail(student.id, validated.email));
+        await studentApi.changeName(student.id, validated.name);
       }
 
-      await Promise.all(promises);
+      if (validated.cpf !== student.cpf) {
+        await studentApi.changeCpf(student.id, validated.cpf);
+      }
+
+      if (validated.grade !== student.grade) {
+        const gradeFormatted = validated.grade.toFixed(2);
+        await studentApi.changeGrade(student.id, gradeFormatted);
+      }
+
+      if (validated.email !== student.email) {
+        await studentApi.changeEmail(student.id, validated.email);
+      }
       onClose();
       onSave();
     } catch (err) {
@@ -208,6 +216,9 @@ export default function EditStudentModal({ opened, onClose, student, onSave }: P
                   value={grade}
                   onChange={value => setGrade(value || '')}
                   error={errors.grade}
+                  clampBehavior="strict"
+                  allowNegative={false}
+                  decimalScale={2}
                   min={0}
                   max={10}
                   step={0.1}

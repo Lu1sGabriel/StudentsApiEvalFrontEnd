@@ -192,23 +192,21 @@ export default function InsertStudentModal({ opened, onClose, onSubmit }: Props)
                 />
                 <NumberInput
                   label="Nota"
-                  placeholder="Digite a nota (0 a 10)"
                   value={grade}
-                  onChange={value => {
-                    setGrade(value ?? '');
-                    if (errors.grade) setErrors(prev => ({ ...prev, grade: '' }));
-                  }}
-                  leftSection={<IconTrophy size={16} />}
+                  onChange={value => setGrade(value || '')}
+                  error={errors.grade}
+                  clampBehavior="strict"
+                  allowNegative={false}
+                  decimalScale={2}
                   min={0}
                   max={10}
                   step={0.1}
-                  decimalScale={1}
-                  error={errors.grade}
-                  size="md"
                   hideControls
+                  leftSection={<IconTrophy size={16} />}
+                  size="md"
                   classNames={{
                     label: 'font-medium text-gray-700 mb-1',
-                    input: 'border-gray-300 focus:border-green-500',
+                    input: 'border-gray-300 focus:border-yellow-500',
                   }}
                 />
               </div>
