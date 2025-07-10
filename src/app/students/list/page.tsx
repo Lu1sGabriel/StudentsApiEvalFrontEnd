@@ -40,6 +40,7 @@ import {
   IconCalendar,
   IconStar,
   IconSchool,
+  IconHome,
 } from '@tabler/icons-react';
 import InsertStudentModal from '../modals/insert';
 import StudentViewModal from '../modals/detail';
@@ -48,6 +49,7 @@ import { formatDate } from '@/utils/formatDateUtils';
 import { CreateStudent, Student, studentApi } from '@/services/client/student';
 import EditStudentModal from '../modals/edit';
 import ConfirmDeactivateModal from '../modals/deactivate';
+import Link from 'next/link';
 
 type SortField = 'name' | 'email' | 'grade' | 'createdAt';
 type SortOrder = 'asc' | 'desc';
@@ -311,6 +313,11 @@ export default function Students() {
           </Text>
         </div>
         <Group>
+          <Link href="/">
+            <Button variant="filled" color="blue" leftSection={<IconHome size="1rem" />}>
+              Página Inicial
+            </Button>
+          </Link>
           <Button
             leftSection={<IconUserPlus size="1rem" />}
             className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
