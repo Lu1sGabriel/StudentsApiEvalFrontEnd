@@ -4,15 +4,15 @@ import {
   Text,
   Badge,
   Avatar,
-  Card,
   ActionIcon,
   Tooltip,
   ThemeIcon,
   Paper,
   Progress,
-  Grid,
   Title,
   CopyButton,
+  Stack,
+  Divider,
 } from '@mantine/core';
 import {
   IconUser,
@@ -24,7 +24,7 @@ import {
   IconTrendingUp,
   IconSchool,
   IconChartBar,
-  IconBookmark,
+  IconEye,
 } from '@tabler/icons-react';
 import { formatCPF } from '@/utils/formatCpfUtils';
 import { Student } from '@/services/client/student';
@@ -70,135 +70,158 @@ export default function StudentViewModal({ student, opened, onClose }: StudentVi
     <Modal
       opened={opened}
       onClose={onClose}
+      centered
       size="lg"
-      title={
-        <Group>
-          <ThemeIcon size={32} className="bg-gradient-to-br from-blue-500 to-purple-600">
-            <IconUser size={18} />
-          </ThemeIcon>
-          <div>
-            <Text size="lg" className="font-bold !text-black">
-              Perfil do Estudante
-            </Text>
-            <Text size="sm" c="dimmed">
-              Informações detalhadas e histórico
-            </Text>
-          </div>
-        </Group>
-      }
+      radius="lg"
+      withCloseButton={false}
       overlayProps={{
         backgroundOpacity: 0.55,
         blur: 3,
       }}
-      transitionProps={{ transition: 'fade', duration: 200 }}
-      className="overflow-hidden"
+      transitionProps={{
+        transition: 'slide-up',
+        duration: 300,
+      }}
+      classNames={{
+        content: 'overflow-hidden',
+        body: 'p-0',
+      }}
     >
-      <div className="space-y-6">
-        {/* Header do Estudante */}
-        <Card className="bg-gradient-to-r from-blue-50 to-purple-50 border-2 border-blue-200">
-          <Group>
-            <Avatar size={80}>{getInitials(student.name)}</Avatar>
-            <div className="flex-1">
-              <Title order={3} className="text-gray-900 mb-2">
-                {student.name}
-              </Title>
-              <Group mb="xs">
-                <Badge
-                  color={getGradeBadgeColor(student.grade)}
-                  size="lg"
-                  variant="filled"
-                  className="font-bold"
-                  leftSection={<GradeIcon size={16} />}
-                >
-                  Nota: {student.grade.toFixed(1)}
-                </Badge>
-                <Badge variant="outline" color={gradeInfo.color} size="lg">
-                  {gradeInfo.status}
-                </Badge>
-              </Group>
-              <Progress
-                value={(student.grade / 10) * 100}
-                color={getGradeBadgeColor(student.grade)}
-                size="md"
-                className="w-full"
-              />
+      <Stack gap={0}>
+        <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-6 border-b border-blue-100">
+          <Group gap="md" align="center">
+            <ThemeIcon size={50} radius="xl" color="blue" variant="light">
+              <IconEye size={28} />
+            </ThemeIcon>
+            <div>
+              <Text size="xl" fw={700} className="text-blue-800">
+                Perfil do Estudante
+              </Text>
+              <Text size="sm" c="dimmed" className="text-blue-600">
+                Informações detalhadas
+              </Text>
             </div>
           </Group>
-        </Card>
+        </div>
 
-        <Card className="border-2 border-gray-200">
-          <Title order={4} className="text-gray-800 mb-4 flex items-center gap-2">
-            <IconUser size={20} className="text-blue-500" />
-            Informações Pessoais
-          </Title>
+        {/* Student Header Card */}
+        <div className="px-6 pt-6">
+          <Paper className="bg-gradient-to-r from-blue-50 to-purple-50 border-2 border-blue-200 p-6 rounded-lg">
+            <Group align="center" gap="lg">
+              <Avatar size={80} radius="xl">
+                {getInitials(student.name)}
+              </Avatar>
+              <div className="flex-1">
+                <Title order={3} className="text-gray-900 mb-3">
+                  {student.name}
+                </Title>
+                <Group mb="md" gap="sm">
+                  <Badge
+                    color={getGradeBadgeColor(student.grade)}
+                    size="lg"
+                    variant="filled"
+                    className="font-bold"
+                    leftSection={<GradeIcon size={16} />}
+                  >
+                    Nota: {student.grade.toFixed(1)}
+                  </Badge>
+                  <Badge variant="outline" color={gradeInfo.color} size="lg" className="font-medium">
+                    {gradeInfo.status}
+                  </Badge>
+                </Group>
+                <div className="space-y-2">
+                  <Group justify="space-between">
+                    <Text size="sm" c="dimmed" className="font-medium">
+                      Desempenho Acadêmico
+                    </Text>
+                    <Text size="sm" fw={500} className="text-gray-700">
+                      {student.grade.toFixed(1)}/10
+                    </Text>
+                  </Group>
+                  <Progress
+                    value={(student.grade / 10) * 100}
+                    color={getGradeBadgeColor(student.grade)}
+                    size="lg"
+                    className="w-full"
+                    radius="md"
+                  />
+                </div>
+              </div>
+            </Group>
+          </Paper>
+        </div>
 
-          <Grid>
-            <Grid.Col span={12}>
-              <Paper className="bg-gray-50 p-4 rounded-lg">
-                <Group justify="space-between" className="mb-3">
-                  <Group>
-                    <ThemeIcon size={36} className="bg-blue-100 text-blue-600">
+        <div className="p-6">
+          <Stack gap="lg">
+            <div>
+              <Group mb="md" gap="sm">
+                <ThemeIcon size={24} color="blue" variant="light">
+                  <IconUser size={16} />
+                </ThemeIcon>
+                <Title order={4} className="text-gray-800">
+                  Informações Pessoais
+                </Title>
+              </Group>
+
+              <Paper className="bg-gray-50 border border-gray-200 p-5 rounded-lg">
+                <div className="grid grid-cols-1 gap-4">
+                  {/* Linha do Email */}
+                  <div className="flex items-center gap-4">
+                    <ThemeIcon size={36} className="bg-blue-100 text-blue-600" variant="light">
                       <IconMail size={18} />
                     </ThemeIcon>
-                    <div>
-                      <Text size="sm" c="dimmed" className="font-medium">
-                        Email
-                      </Text>
-                      <Text className="font-medium text-gray-900">{student.email}</Text>
-                    </div>
-                  </Group>
-                  <CopyButton value={student.email}>
-                    {({ copied, copy }) => (
-                      <Tooltip label={copied ? 'Copiado!' : 'Copiar email'}>
-                        <ActionIcon color={copied ? 'green' : 'blue'} variant="subtle" onClick={copy}>
-                          {copied ? <IconCheck size={16} /> : <IconCopy size={16} />}
-                        </ActionIcon>
-                      </Tooltip>
-                    )}
-                  </CopyButton>
-                </Group>
+                    <Text className="font-medium text-gray-900 break-all flex-1">{student.email}</Text>
+                    <CopyButton value={student.email}>
+                      {({ copied, copy }) => (
+                        <Tooltip label={copied ? 'Copiado!' : 'Copiar email'}>
+                          <ActionIcon color={copied ? 'green' : 'blue'} variant="subtle" onClick={copy} size="lg">
+                            {copied ? <IconCheck size={16} /> : <IconCopy size={16} />}
+                          </ActionIcon>
+                        </Tooltip>
+                      )}
+                    </CopyButton>
+                  </div>
 
-                <Group justify="space-between" className="mb-3">
-                  <Group>
-                    <ThemeIcon size={36} className="bg-green-100 text-green-600">
+                  {/* Linha do CPF */}
+                  <div className="flex items-center gap-4">
+                    <ThemeIcon size={36} className="bg-green-100 text-green-600" variant="light">
                       <IconId size={18} />
                     </ThemeIcon>
-                    <div>
-                      <Text size="sm" c="dimmed" className="font-medium">
-                        CPF
-                      </Text>
-                      <Text className="font-mono font-medium text-gray-900">{formatCPF(student.cpf)}</Text>
-                    </div>
-                  </Group>
-                  <CopyButton value={student.cpf}>
-                    {({ copied, copy }) => (
-                      <Tooltip label={copied ? 'Copiado!' : 'Copiar CPF'}>
-                        <ActionIcon color={copied ? 'green' : 'blue'} variant="subtle" onClick={copy}>
-                          {copied ? <IconCheck size={16} /> : <IconCopy size={16} />}
-                        </ActionIcon>
-                      </Tooltip>
-                    )}
-                  </CopyButton>
-                </Group>
-
-                <Group>
-                  <ThemeIcon size={36} className="bg-purple-100 text-purple-600">
-                    <IconBookmark size={18} />
-                  </ThemeIcon>
-                  <div>
-                    <Text size="sm" c="dimmed" className="font-medium">
-                      Primeira Letra Única
-                    </Text>
-                    <Badge variant="outline" color="purple" size="lg" className="font-bold">
-                      {student.firstLetterThatDontRepeat}
-                    </Badge>
+                    <Text className="font-mono font-medium text-gray-900 flex-1">{formatCPF(student.cpf)}</Text>
+                    <CopyButton value={student.cpf}>
+                      {({ copied, copy }) => (
+                        <Tooltip label={copied ? 'Copiado!' : 'Copiar CPF'}>
+                          <ActionIcon color={copied ? 'green' : 'blue'} variant="subtle" onClick={copy} size="lg">
+                            {copied ? <IconCheck size={16} /> : <IconCopy size={16} />}
+                          </ActionIcon>
+                        </Tooltip>
+                      )}
+                    </CopyButton>
                   </div>
-                </Group>
+                </div>
               </Paper>
-            </Grid.Col>
-          </Grid>
-        </Card>
-      </div>
+            </div>
+
+            <Divider />
+
+            <Paper className="bg-gradient-to-r from-gray-50 to-blue-50 border border-gray-200 p-5 rounded-lg">
+              <Group justify="space-between" align="center">
+                <div>
+                  <Text size="sm" c="dimmed" className="font-medium mb-1">
+                    Resumo do Desempenho
+                  </Text>
+                  <Text size="lg" fw={600} className="text-gray-900">
+                    {gradeInfo.status}
+                  </Text>
+                </div>
+                <ThemeIcon size={48} color={gradeInfo.color} variant="light">
+                  <GradeIcon size={24} />
+                </ThemeIcon>
+              </Group>
+            </Paper>
+          </Stack>
+        </div>
+      </Stack>
     </Modal>
   );
 }
