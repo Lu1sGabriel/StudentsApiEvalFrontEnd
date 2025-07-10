@@ -502,12 +502,7 @@ export default function Students() {
                   <tr key={student.id} className="hover:bg-blue-50 transition-colors">
                     <td className="p-4">
                       <Group>
-                        <Avatar
-                          size={40}
-                          className="bg-gradient-to-br from-blue-500 to-purple-600 text-white font-bold"
-                        >
-                          {getInitials(student.name)}
-                        </Avatar>
+                        <Avatar size={40}>{getInitials(student.name)}</Avatar>
                         <div>
                           <Text className="font-medium text-gray-900">{student.name}</Text>
                           <Badge variant="outline" size="xs" className="mt-1">

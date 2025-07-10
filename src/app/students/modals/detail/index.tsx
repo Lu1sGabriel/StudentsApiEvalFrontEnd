@@ -97,9 +97,7 @@ export default function StudentViewModal({ student, opened, onClose }: StudentVi
         {/* Header do Estudante */}
         <Card className="bg-gradient-to-r from-blue-50 to-purple-50 border-2 border-blue-200">
           <Group>
-            <Avatar size={80} className="bg-gradient-to-br from-blue-500 to-purple-600 text-white font-bold text-2xl">
-              {getInitials(student.name)}
-            </Avatar>
+            <Avatar size={80}>{getInitials(student.name)}</Avatar>
             <div className="flex-1">
               <Title order={3} className="text-gray-900 mb-2">
                 {student.name}
